@@ -71,5 +71,3 @@ Você pode ajustar:
 - Cooldown entre usos (`COOLDOWN_SECONDS = 10`)
 - Servidores ativos (`ENABLE_ON_SERVERS`)
 
-## Licença
-MIT
