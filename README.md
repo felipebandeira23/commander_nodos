@@ -13,9 +13,15 @@ Bot para servidores Hell Let Loose baseado no CRCON (hll_rcon_tool), que permite
 - [hll_rcon_tool (CRCON)](https://github.com/MarechJ/hll_rcon_tool) versão 11.6.1 ou superior
 
 ## Instalação
-1. Copie o arquivo `commander_nodos.py` para a pasta `custom_tools/` do seu CRCON.
+1. Coloque o arquivo `commander_nodos.py` dentro da pasta `custom_tools/` do seu diretório principal do CRCON. Se a pasta não existir, crie.
 
-2. Abra o arquivo `hooks.py` do seu CRCON e adicione as seguintes linhas:
+```
+cd ~/hll_rcon_tool
+mkdir -p custom_tools
+cp commander_nodos.py custom_tools/
+```
+
+2. Edite o arquivo `hooks.py` (que também está no diretório principal do CRCON) e registre os ganchos do bot:
 
 ```python
 import custom_tools.commander_nodos as commander_nodos
@@ -29,8 +35,16 @@ def commander_nodos_log(rcon, log):
     commander_nodos.commander_nodos_on_log(rcon, log)
 ```
 
-3. Verifique se o bot está habilitado para o servidor correto.
-No `commander_nodos.py`, modifique se necessário:
+3. Reinicie o CRCON para que o novo plugin seja carregado. Se estiver usando `restart.sh`, basta executar:
+
+```
+./restart.sh
+```
+
+> Certifique-se de que o script `restart.sh` tem permissões de execução (`chmod +x restart.sh`).
+
+4. Verifique se o bot está habilitado para o servidor correto.
+No `commander_nodos.py`, edite se necessário:
 ```python
 ENABLE_ON_SERVERS = ["1"]
 ```
