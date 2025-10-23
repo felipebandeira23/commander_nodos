@@ -23,7 +23,7 @@ cp commander_nodos.py custom_tools/
 
 2. Edite o arquivo `hooks.py` (que também está no diretório principal do CRCON) e registre os ganchos do bot:
 
-```python
+```
 import custom_tools.commander_nodos as commander_nodos
 
 @on_chat
@@ -39,13 +39,15 @@ def commander_nodos_log(rcon, log):
 
 ```
 ./restart.sh
+ou
+sudo bash restart.sh
 ```
 
 > Certifique-se de que o script `restart.sh` tem permissões de execução (`chmod +x restart.sh`).
 
 4. Verifique se o bot está habilitado para o servidor correto.
-No `commander_nodos.py`, edite se necessário:
-```python
+No `commander_nodos.py`, edite se possuir mais de um servidor:
+```
 ENABLE_ON_SERVERS = ["1"]
 ```
 
@@ -70,6 +72,7 @@ Você pode ajustar:
 - Quantidade mínima de nodos (`NODES_REQUIRED_PER_TYPE = 3`)
 - Cooldown entre usos (`COOLDOWN_SECONDS = 10`)
 - Servidores ativos (`ENABLE_ON_SERVERS`)
+- CHAT_COMMAND = (`!nodos`) / Mude para o que preferir
 
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
@@ -151,5 +154,5 @@ You can adjust:
 - Minimum number of required nodes (`NODES_REQUIRED_PER_TYPE = 3`)
 - Cooldown between uses (`COOLDOWN_SECONDS = 10`)
 - Enabled servers (`ENABLE_ON_SERVERS`)
-- CHAT_COMMAND = (`!nodos`) Switch to whatever you prefer
+- CHAT_COMMAND = (`!nodos`) / Switch to whatever you prefer
 
