@@ -74,6 +74,17 @@ Você pode ajustar:
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 # English - Commander Nodos Bot
+Bot for Hell Let Loose servers based on CRCON (hll_rcon_tool), which allows the commander to request the construction of nodes only when necessary. It identifies via logs if any nodes are missing and notifies engineers on the same team with a clear and automated message.
+
+## Functionality
+- The commander can use the `!nodes` command in the game chat.
+- The bot checks through logs if all three types of nodes (ammunition, fuel, and manpower) are built.
+- If any are missing, engineers on the same team receive a private message requesting the construction.
+- The commander receives a confirmation that the request has been sent.
+  
+## Install
+
+```
 cd ~/hll_rcon_tool
 mkdir -p custom_tools
 cp commander_nodos.py custom_tools/
@@ -82,11 +93,12 @@ cp commander_nodos.py custom_tools/
 
 2. Edit the `hooks.py` file (also in the CRCON root directory) and register the bot hooks:
 
-
-```python
-import custom_tools.commander_nodos as commander_nodos
-
-
+- In the import part, on top of the file
+```
+import custom_tools.commander_nodos as commander_nodos 
+```
+- At the very end of the file
+```
 @on_chat
 def commander_nodos_chat(rcon, log):
 commander_nodos.commander_nodos_on_chat(rcon, log)
@@ -97,12 +109,11 @@ def commander_nodos_log(rcon, log):
 commander_nodos.commander_nodos_on_log(rcon, log)
 ```
 
-
 3. Restart CRCON so the new plugin is loaded. If using `restart.sh`, simply run:
-
-
-```bash
+```
 ./restart.sh
+or
+sudo bash restart.sh
 ```
 
 
@@ -110,8 +121,8 @@ commander_nodos.commander_nodos_on_log(rcon, log)
 
 
 4. Confirm the bot is enabled for the correct server.
-Edit this in `commander_nodos.py` if necessary:
-```python
+Edit this in `commander_nodos.py` if you have more than one server:
+```
 ENABLE_ON_SERVERS = ["1"]
 ```
 
@@ -140,4 +151,5 @@ You can adjust:
 - Minimum number of required nodes (`NODES_REQUIRED_PER_TYPE = 3`)
 - Cooldown between uses (`COOLDOWN_SECONDS = 10`)
 - Enabled servers (`ENABLE_ON_SERVERS`)
+- CHAT_COMMAND = (`!nodos`) Switch to whatever you prefer
 
