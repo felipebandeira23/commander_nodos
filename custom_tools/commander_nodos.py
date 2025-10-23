@@ -1,6 +1,10 @@
 """
 commander_nodos.py
 
+This bot was developed by:
+Felipe Bandeira 
+https://github.com/felipebandeira23/commander_nodos
+
 Plugin para CRCON/HLL:
 - Comandante pode usar !nodos para solicitar nodos.
 - Bot verifica se estão faltando nodos de Munição, Combustível ou Mão-de-obra.
