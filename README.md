@@ -71,9 +71,9 @@ Você pode ajustar:
 - Cooldown entre usos (`COOLDOWN_SECONDS = 10`)
 - Servidores ativos (`ENABLE_ON_SERVERS`)
 
-
-
-# Commander Nodos Bot
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+# English - Commander Nodos Bot
 cd ~/hll_rcon_tool
 mkdir -p custom_tools
 cp commander_nodos.py custom_tools/
@@ -141,10 +141,3 @@ You can adjust:
 - Cooldown between uses (`COOLDOWN_SECONDS = 10`)
 - Enabled servers (`ENABLE_ON_SERVERS`)
 
-
-## Bot remobilize_on_rd.py
-
-
-This bot listens to chat and detects when the commander types `!rd`. When triggered:
-- Sends a message to engineers asking them to rebuild nodes after a bombing or node loss.
-- Uses the same `@on_chat` hook structure in `hooks.py`.
