@@ -16,16 +16,23 @@ Bot para servidores Hell Let Loose baseado no CRCON (hll_rcon_tool), que permite
 1. Coloque o arquivo `commander_nodos.py` dentro da pasta `custom_tools/` do seu diretório principal do CRCON. Se a pasta não existir, crie.
 
 ```
-cd ~/hll_rcon_tool
-mkdir -p custom_tools
-cp commander_nodos.py custom_tools/
+cd /root/hll_rcon_tool
+wget https://raw.githubusercontent.com/ElGuillermo/HLL_CRCON_restart/refs/heads/main/restart.sh
+mkdir custom_tools
 ```
+Depois execute:
+```
+cd custom_tools
+wget https://raw.githubusercontent.com/felipebandeira23/commander_nodos/7ec6ce2f00ca0332d4fe91268b80870adc3e3638/custom_tools/commander_nodos.py
+```
+2. Edite o arquivo `hooks.py` (localizado em /hll_rcon_tool/rcon) e registre os ganchos do bot:
 
-2. Edite o arquivo `hooks.py` (que também está no diretório principal do CRCON) e registre os ganchos do bot:
-
+Bem no início do arquivo
 ```
 import custom_tools.commander_nodos as commander_nodos
-
+```
+Depois coloque bem no final do arquivo
+```
 @on_chat
 def commander_nodos_chat(rcon, log):
     commander_nodos.commander_nodos_on_chat(rcon, log)
@@ -39,7 +46,9 @@ def commander_nodos_log(rcon, log):
 
 ```
 ./restart.sh
-ou
+```
+Ou execute
+```
 sudo bash restart.sh
 ```
 
@@ -49,6 +58,8 @@ sudo bash restart.sh
 No `commander_nodos.py`, edite se possuir mais de um servidor:
 ```
 ENABLE_ON_SERVERS = ["1"]
+
+# ['1],['2'].... Param mais servidores
 ```
 
 ## Como funciona
@@ -72,7 +83,7 @@ Você pode ajustar:
 - Quantidade mínima de nodos (`NODES_REQUIRED_PER_TYPE = 3`)
 - Cooldown entre usos (`COOLDOWN_SECONDS = 10`)
 - Servidores ativos (`ENABLE_ON_SERVERS`)
-- CHAT_COMMAND = (`!nodos`) / Mude para o que preferir
+- CHAT_COMMAND = (`!nodos`) # Mude para o que preferir
 
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
@@ -88,11 +99,15 @@ Bot for Hell Let Loose servers based on CRCON (hll_rcon_tool), which allows the 
 ## Install
 
 ```
-cd ~/hll_rcon_tool
-mkdir -p custom_tools
-cp commander_nodos.py custom_tools/
+cd /root/hll_rcon_tool
+wget https://raw.githubusercontent.com/ElGuillermo/HLL_CRCON_restart/refs/heads/main/restart.sh
+mkdir custom_tools
 ```
-
+Then execute
+```
+cd custom_tools
+wget https://raw.githubusercontent.com/felipebandeira23/commander_nodos/7ec6ce2f00ca0332d4fe91268b80870adc3e3638/custom_tools/commander_nodos.py
+```
 
 2. Edit the `hooks.py` file (also in the CRCON root directory) and register the bot hooks:
 
@@ -115,7 +130,9 @@ commander_nodos.commander_nodos_on_log(rcon, log)
 3. Restart CRCON so the new plugin is loaded. If using `restart.sh`, simply run:
 ```
 ./restart.sh
+```
 or
+```
 sudo bash restart.sh
 ```
 
@@ -127,6 +144,8 @@ sudo bash restart.sh
 Edit this in `commander_nodos.py` if you have more than one server:
 ```
 ENABLE_ON_SERVERS = ["1"]
+
+# ['1],['2'].... If you have more than one
 ```
 
 
