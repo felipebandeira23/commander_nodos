@@ -91,7 +91,7 @@ Você pode ajustar:
 Bot for Hell Let Loose servers based on CRCON (hll_rcon_tool), which allows the commander to request the construction of nodes only when necessary. It identifies via logs if any nodes are missing and notifies engineers on the same team with a clear and automated message.
 
 ## Functionality
-- The commander can use the `!nodes` command in the game chat.
+- The commander can use the `!nodos` command in the game chat.
 - The bot checks through logs if all three types of nodes (ammunition, fuel, and manpower) are built.
 - If any are missing, engineers on the team receive a private message requesting the construction.
 - The commander receives a confirmation that the request has been sent.
