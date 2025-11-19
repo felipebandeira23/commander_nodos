@@ -238,7 +238,7 @@ _active_requests = {
    - Cria solicitação ativa
    - Notifica todos os engenheiros
 
-2. **Engenheiro digita `!nodook muni`**
+2. **Engenheiro digita `!feito muni`**
    - Bot verifica que é engenheiro
    - Valida tipo de node
    - Adiciona confirmação
@@ -253,7 +253,7 @@ _active_requests = {
 ### Validações
 
 - ✅ Apenas comandante pode usar `!nodos`
-- ✅ Apenas engenheiros podem usar `!nodook`
+- ✅ Apenas engenheiros podem usar `!feito`
 - ✅ Cooldown de 60s entre solicitações
 - ✅ Validação de tipos de node
 - ✅ Proteção contra confirmações duplicadas
@@ -372,60 +372,372 @@ Este projeto é open source e está disponível sob os termos da licença MIT.
 
 # 🇬🇧 English Version
 
-## Installation
+# Commander Nodos Bot
+
+Bot for Hell Let Loose servers based on CRCON (hll_rcon_tool), which allows the commander to request node construction and engineers to confirm when they complete the task. System with confirmation tracking by node type.
+
+**Developed by:** Felipe Bandeira  
+**GitHub:** https://github.com/felipebandeira23/commander_nodos
+
+## 📋 Features
+- Commander can use the `!nodos` command in game chat to request node construction from engineers.
+- Engineers on the same team receive a private message requesting construction of all node types.
+- Engineers use `!feito [type]` to confirm they built a specific node (muni/fuel/manpower).
+- Commander receives real-time notifications about confirmation progress.
+- System tracks 3 nodes of each type (munitions, fuel, and manpower) per team.
+- When all nodes are confirmed, commander and engineers are notified of mission completion.
+
+## 🔧 Requirements
+- Python 3.10+
+- [hll_rcon_tool (CRCON)](https://github.com/MarechJ/hll_rcon_tool) version 11.6.1 or higher
+
+## 🚀 Installation
+
+### 1. Download the bot file
 
 ```bash
 cd /root/hll_rcon_tool/custom_tools
 wget https://raw.githubusercontent.com/felipebandeira23/commander_nodos/main/custom_tools/commander_nodos.py
 ```
 
-Edit `/root/hll_rcon_tool/rcon/hooks.py`:
+If the `custom_tools` folder doesn't exist:
+```bash
+cd /root/hll_rcon_tool
+mkdir -p custom_tools
+cd custom_tools
+wget https://raw.githubusercontent.com/felipebandeira23/commander_nodos/main/custom_tools/commander_nodos.py
+```
 
-**Add import at the top:**
+### 2. Register hooks in the `hooks.py` file
+
+Edit the file `/root/hll_rcon_tool/rcon/hooks.py`:
+
+**At the beginning of the file, add the import:**
 ```python
 import custom_tools.commander_nodos as commander_nodos
 ```
 
-**Add hook at the bottom:**
+**At the end of the file, add the hook:**
 ```python
 @on_chat
 def commander_nodos_chat(rcon: Rcon, struct_log: StructuredLogLineWithMetaData):
     commander_nodos.commander_nodos_on_chat(rcon, struct_log)
 ```
 
-**Restart CRCON:**
+### 3. Restart CRCON
+
 ```bash
+cd /root/hll_rcon_tool
 sudo bash restart.sh
 ```
 
-## Usage
-
-### Commander
-- Type `!nodos` to request nodes from engineers
-- Receive real-time updates as engineers confirm
-- Get notified when all nodes are complete
-
-### Engineers
-- Receive notification when commander requests nodes
-- Type `!feito muni` / `!feito fuel` / `!feito manpower` to confirm
-- Get feedback on completion status
-
-## Configuration
-
-Edit `commander_nodos.py`:
-```python
-ENABLE_ON_SERVERS: Final = ["1"]  # Server IDs
-CHAT_COMMAND_REQUEST: Final = "!nodos"  # Commander command
-CHAT_COMMAND_CONFIRM: Final = "!feito"  # Engineer command
-LANGUAGE: Final = "en"  # "pt" or "en"
+Or if the script has execution permissions:
+```bash
+./restart.sh
 ```
 
-## Why Manual Confirmation?
+> **Note:** Make sure the `restart.sh` script has execution permissions (`chmod +x restart.sh`).
 
-Hell Let Loose **does not generate structure construction logs**. The only available logs are:
+### 4. Configure active servers
+
+Edit the `commander_nodos.py` file and configure which servers the bot will be active on:
+
+```python
+ENABLE_ON_SERVERS: Final = ["1"]  # ["1", "2", "3"] for multiple servers
+```
+
+## 📝 How to Use
+
+### For Commanders
+
+#### Request Nodes
+```
+!nodos
+```
+
+**What happens:**
+- All engineers on your team receive a notification
+- You receive confirmation of how many engineers were notified
+- System starts tracking confirmations
+
+**Example message engineers receive:**
+```
+COMMANDER REQUESTED NODES!
+We need: Munition, Fuel, Manpower
+When finished, confirm: !feito [muni/fuel/manpower]
+```
+
+**Example confirmation for commander:**
+```
+Request sent to 3 engineer(s)!
+Awaiting confirmations: [...] Munition: 0/3 | [...] Fuel: 0/3 | [...] Manpower: 0/3
+```
+
+#### Receive Updates
+
+Whenever an engineer confirms a node, you will receive:
+```
+Node confirmed: Munition
+Status: [...] Munition: 1/3 | [...] Fuel: 0/3 | [...] Manpower: 0/3
+```
+
+#### Final Confirmation
+
+When all nodes are confirmed:
+```
+ALL NODES CONFIRMED!
+Full resources available!
+```
+
+---
+
+### For Engineers
+
+#### When Receiving Request
+
+You will see:
+```
+COMMANDER REQUESTED NODES!
+We need: Munition, Fuel, Manpower
+When finished, confirm: !feito [muni/fuel/manpower]
+```
+
+#### Confirm Node Built
+
+After building a node, confirm with:
+
+**Munition:**
+```
+!feito muni
+```
+
+**Fuel:**
+```
+!feito fuel
+```
+
+**Manpower:**
+```
+!feito manpower
+```
+
+**Example response:**
+```
+Confirmed: Munition
+Status: [...] Munition: 1/3 | [...] Fuel: 0/3 | [...] Manpower: 0/3
+```
+
+#### Mission Complete
+
+When all nodes are confirmed, you will receive:
+```
+Mission complete! All nodes built!
+```
+
+---
+
+## ⚙️ Technical Features
+
+### Confirmation System
+- Tracks individual confirmations by engineer and node type
+- Requires 3 confirmations per type (can be from different engineers)
+- Prevents duplicate confirmations by the same engineer
+- Real-time status with `[OK]` format when complete and `[...]` when pending
+
+### Cooldown
+- 60 seconds between uses of `!nodos` command by commander
+- No cooldown for `!feito` confirmations by engineers
+
+### Team System
+- Requests are isolated by team (Allies/Axis)
+- Only engineers on the same team as commander receive notifications
+- Each team can have its own active request simultaneously
+
+---
+
+## 🎨 Customization
+
+### File: `commander_nodos.py`
+
+```python
+# -------- CONFIG --------
+ENABLE_ON_SERVERS: Final = ["1"]  # Server IDs where bot is active
+CHAT_COMMAND_REQUEST: Final = "!nodos"  # Commander command
+CHAT_COMMAND_CONFIRM: Final = "!feito"  # Engineer command
+COOLDOWN_SECONDS: Final = 60  # Time between !nodos uses
+LANGUAGE: Final = "en"  # "pt" for Portuguese, "en" for English
+NODES_REQUIRED_PER_TYPE = 3  # Confirmations required per type
+# ------------------------
+```
+
+### Configurable Parameters
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `ENABLE_ON_SERVERS` | List of server IDs where bot is active | `["1"]` |
+| `CHAT_COMMAND_REQUEST` | Command that commander uses | `"!nodos"` |
+| `CHAT_COMMAND_CONFIRM` | Command that engineers use | `"!feito"` |
+| `COOLDOWN_SECONDS` | Seconds between !nodos uses by same commander | `60` |
+| `LANGUAGE` | Message language ("pt" or "en") | `"en"` |
+| `NODES_REQUIRED_PER_TYPE` | How many confirmations needed per node type | `3` |
+
+---
+
+## 🔍 Technical Details
+
+### State Tracking
+
+The bot maintains a dictionary in memory:
+```python
+_active_requests = {
+    "Allies": {
+        "commander_id": "76561198000000000",
+        "timestamp": datetime.utcnow(),
+        "engineers_notified": 3,
+        "confirmations": {
+            "muni": ["engineer_id_1"],
+            "fuel": ["engineer_id_2", "engineer_id_3"],
+            "manpower": []
+        }
+    }
+}
+```
+
+### Execution Flow
+
+1. **Commander types `!nodos`**
+   - Bot checks cooldown
+   - Validates is commander
+   - Lists engineers on team
+   - Creates active request
+   - Notifies all engineers
+
+2. **Engineer types `!feito muni`**
+   - Bot verifies is engineer
+   - Validates node type
+   - Adds confirmation
+   - Notifies engineer and commander
+   - Checks if complete
+
+3. **When complete**
+   - Notifies commander
+   - Notifies all engineers
+   - Clears active request
+
+### Validations
+
+- ✅ Only commander can use `!nodos`
+- ✅ Only engineers can use `!feito`
+- ✅ 60s cooldown between requests
+- ✅ Node type validation
+- ✅ Protection against duplicate confirmations
+- ✅ Team verification (Allies/Axis)
+
+---
+
+## 🐛 Troubleshooting
+
+### "Wait 60s between uses"
+- Wait for cooldown to finish before using `!nodos` again
+- Only the commander who made the first request needs to wait
+
+### "Only commander can use !nodos"
+- Make sure you are in the Commander role
+- Bot checks via `get_detailed_players()` and `get_player_info()`
+
+### "No engineers found"
+- Confirm there are players with "Engineer" role on your team
+- Ask someone to switch class to engineer
+
+### "No active request"
+- Commander needs to use `!nodos` first
+- Requests are cleared after completing all nodes
+
+### "Invalid type"
+- Use only: `muni`, `fuel` or `manpower`
+- Correct example: `!feito muni`
+
+### Bot doesn't respond
+- Check if server is in `ENABLE_ON_SERVERS` list
+- Confirm import is correct in `hooks.py`
+- Check CRCON logs: `docker compose logs -f backend`
+
+---
+
+## 🌍 Multi-language Support
+
+The bot supports Portuguese and English. To change language:
+
+```python
+LANGUAGE: Final = "en"  # "pt" for Portuguese, "en" for English
+```
+
+### Messages in English:
+- Commander command: `!nodos`
+- Confirmation: `!feito muni` / `!feito fuel` / `!feito manpower`
+- All messages are automatically translated
+
+---
+
+## 📊 Complete Session Example
+
+```
+[Commander] !nodos
+[Bot → Commander] Request sent to 3 engineer(s)!
+                  Awaiting confirmations: [...] Munition: 0/3 | [...] Fuel: 0/3 | [...] Manpower: 0/3
+
+[Bot → Eng1] COMMANDER REQUESTED NODES!
+             We need: Munition, Fuel, Manpower
+             When finished, confirm: !feito [muni/fuel/manpower]
+
+[Engineer1] !feito muni
+[Bot → Eng1] Confirmed: Munition
+             Status: [...] Munition: 1/3 | [...] Fuel: 0/3 | [...] Manpower: 0/3
+[Bot → Commander] Node confirmed: Munition
+                  Status: [...] Munition: 1/3 | [...] Fuel: 0/3 | [...] Manpower: 0/3
+
+[Engineer2] !feito muni
+[Bot → Eng2] Confirmed: Munition
+             Status: [...] Munition: 2/3 | [...] Fuel: 0/3 | [...] Manpower: 0/3
+
+[Engineer3] !feito muni
+[Bot → Eng3] Confirmed: Munition
+             Status: [OK] Munition: 3/3 | [...] Fuel: 0/3 | [...] Manpower: 0/3
+
+... (engineers continue confirming fuel and manpower) ...
+
+[Engineer3] !feito manpower
+[Bot → Commander] ALL NODES CONFIRMED!
+                  Full resources available!
+[Bot → All Engineers] Mission complete! All nodes built!
+```
+
+---
+
+## 📝 Important Notes
+
+### Why manual confirmation system?
+Hell Let Loose **does not generate structure construction logs**. The available logs are only:
 - KILL / TEAM KILL
-- CHAT
+- CHAT (Team/Unit)
 - CONNECTED / DISCONNECTED
-- MATCH START / END
+- MATCH START / MATCH END
 
-There is **no "STRUCTURE BUILT"** log, so manual confirmation is the most reliable solution.
+There is **no "STRUCTURE BUILT"** log or similar in HLL, so the manual confirmation solution is the most reliable.
+
+---
+
+## 📞 Author and Support
+
+**Developed by:** Felipe Bandeira  
+**GitHub:** https://github.com/felipebandeira23/commander_nodos
+
+**Problems or suggestions?**
+- Open an issue on GitHub
+- Contributions are welcome!
+
+---
+
+## 📄 License
+
+This project is open source and available under the terms of the MIT License.
